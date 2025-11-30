@@ -26,18 +26,24 @@ const lines = [
 
 const output = document.getElementById('output');
 const skipBtn = document.getElementById('skipBtn');
+const musicToggle = document.getElementById('musicToggle');
+const bgMusic = document.getElementById('bgMusic');
+const sparklesContainer = document.getElementById('sparklesContainer');
+const confettiContainer = document.getElementById('confettiContainer');
 
-const charDelay = 40;
-const lineDelay = 400;
+const charDelay = 30;
+const lineDelay = 300;
 
 let typing = true;
 let idxLine = 0, idxChar = 0;
 let timer = null;
+let musicPlaying = false;
 
 function typeStep() {
   if (!typing) return;
   if (idxLine >= lines.length) {
     clearTimeout(timer);
+    createConfetti();
     return;
   }
 
@@ -48,6 +54,10 @@ function typeStep() {
     output.appendChild(span);
     idxChar++;
     timer = setTimeout(typeStep, charDelay);
+    
+    if (Math.random() > 0.7) {
+      createSparkle();
+    }
   } else {
     output.appendChild(document.createElement('br'));
     idxLine++;
@@ -61,13 +71,82 @@ function showFullMessage() {
   if (timer) clearTimeout(timer);
   typing = false;
   output.innerHTML = lines.join('<br>');
+  createConfetti();
+}
+
+function createSparkle() {
+  const sparkle = document.createElement('div');
+  sparkle.className = 'sparkle';
+  sparkle.style.left = Math.random() * window.innerWidth + 'px';
+  sparkle.style.top = Math.random() * window.innerHeight + 'px';
+  sparklesContainer.appendChild(sparkle);
+  
+  setTimeout(() => sparkle.remove(), 1500);
+}
+
+function createConfetti() {
+  const colors = ['🌹', '🌺', '🌸', '🌷', '💚', '💙', '💜', '⭐'];
+  
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.textContent = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-20px';
+      confetti.style.fontSize = (Math.random() * 20 + 20) + 'px';
+      confetti.style.opacity = '1';
+      
+      confettiContainer.appendChild(confetti);
+      
+      setTimeout(() => confetti.remove(), 3000);
+    }, i * 50);
+  }
+}
+
+function toggleMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(e => console.log('Audio play failed:', e));
+    musicPlaying = true;
+    musicToggle.classList.add('playing');
+    musicToggle.textContent = '🎵';
+  } else {
+    bgMusic.pause();
+    musicPlaying = false;
+    musicToggle.classList.remove('playing');
+    musicToggle.textContent = '🔊';
+  }
+}
+
+function playMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(e => console.log('Audio play failed:', e));
+  }
 }
 
 window.addEventListener('load', () => {
+  bgMusic.src = "Pink Lips Hate Story 2 320 Kbps.mp3";
+  bgMusic.volume = 0.6;
+  playMusic();
   typeStep();
+});
+
+bgMusic.addEventListener('play', () => {
+  musicPlaying = true;
+  musicToggle.classList.add('playing');
+  musicToggle.textContent = '🎵';
+});
+
+bgMusic.addEventListener('pause', () => {
+  musicPlaying = false;
+  musicToggle.classList.remove('playing');
+  musicToggle.textContent = '🔊';
 });
 
 skipBtn.addEventListener('click', () => {
   if (timer) clearTimeout(timer);
   showFullMessage();
 });
+
+musicToggle.addEventListener('click', toggleMusic);
+document.addEventListener('click', playMusic, { once: true });
