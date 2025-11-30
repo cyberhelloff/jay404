@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <audio id="bgMusic" loop></audio>
+  
+  <div class="music-controls">
+    <button id="musicToggle" title="Toggle Music">🔊</button>
+  </div>
   <div class="wrap">
     <div class="content-container" aria-live="polite">
       <span class="animated-flower flower-1">🌹</span>
@@ -44,6 +49,12 @@
     <img src="https://i.imgur.com/uG5gqkV.png" alt="Flower 4" class="flower flower4">
     <img src="https://i.imgur.com/7yY5w0g.png" alt="Flower 5" class="flower flower5">
   </div>
+
+  <!-- Sparkles -->
+  <div class="sparkles" id="sparklesContainer"></div>
+
+  <!-- Confetti -->
+  <div class="confetti-container" id="confettiContainer"></div>
 
   <script src="script.js"></script>
 </body>
